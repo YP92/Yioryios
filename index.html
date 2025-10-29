@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Yioryios Portfolio Slideshow</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: #fff;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      color: #222;
+    }
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .centered-name {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 80vh;
+      font-size: 1.4rem;
+      font-weight: bold;
+      letter-spacing: 2px;
+      text-align: center;
+      width: 100vw;
+      box-sizing: border-box;
+    }
+    .slideshow {
+      width: 90vw;
+      max-width: 800px;
+      min-height: 400px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: none;
+      padding: 30px 10px 20px 10px;
+      box-sizing: border-box;
+      position: relative;
+      margin: 0 auto;
+    }
+    .slide-img {
+      max-width: 100%;
+      max-height: 70vh;
+      border-radius: 8px;
+      background: #eee;
+      box-shadow: none;
+      margin-bottom: 24px;
+      object-fit: contain;
+      display: block;
+    }
+    .center-controls {
+      display: flex;
+      flex-direction: row;
+      gap: 16px;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 0;
+      margin-top: 0;
+      width: 100%;
+    }
+    .center-controls.hidden {
+      display: none !important;
+    }
+    button,
+    .exhibition-btn {
+      background: none !important;
+      color: #222;
+      border: none !important;
+      border-radius: 0 !important;
+      font-size: 8pt;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      cursor: pointer;
+      outline: none;
+      box-shadow: none !important;
+      letter-spacing: 1px;
+      padding: 0 12px;
+      transition: color 0.2s;
+      text-align: right;
+      width: auto;
+      min-width: 40px;
+    }
+    button:disabled {
+      color: #bbb;
+      cursor: default;
+      background: none !important;
+      border: none !important;
+      box-shadow: none !important;
+    }
+    .counter {
+      position: fixed;
+      left: 24px;
+      bottom: 34px;
+      color: #222;
+      font-size: 8pt;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      letter-spacing: 1px;
+      user-select: none;
+      text-align: left;
+      min-width: 55px;
+      z-index: 1001;
+    }
+    .counter.hidden {
+      display: none !important;
+    }
+    .menu-icon {
+      position: fixed;
+      top: 32px;
+      right: 32px;
+      z-index: 1300;
+      width: 26px;
+      height: 26px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 0;
+    }
+    .menu-bar, .menu-bar::before, .menu-bar::after {
+      display: block;
+      width: 18px;
+      height: 2px;
+      background: #222;
+      border-radius: 1px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .menu-bar {
+      position: relative;
+      background: #222;
+    }
+    .menu-bar::before,
+    .menu-bar::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      width: 18px;
+      height: 2px;
+      background: #222;
+      border-radius: 1px;
+      transition: all 0.3s ease;
+    }
+    .menu-bar::before {
+      top: -6px;
+    }
+    .menu-bar::after {
+      top: 6px;
+    }
+    .menu-bar.open {
+      background: transparent;
+    }
+    .menu-bar.open::before {
+      transform: rotate(45deg) translate(3px, 3px);
+      top: 0;
+    }
+    .menu-bar.open::after {
+      transform: rotate(-45deg) translate(3px, -3px);
+      top: 0;
+    }
+    .dropdown-menu-overlay {
+      position: fixed;
+      top: 0; right: 0; bottom: 0; width: 260px;
+      background: #fff;
+      z-index: 2000;
+      display: none;
+      flex-direction: column;
+      align-items: flex-start;
+      overflow-y: auto;
+      box-shadow: none;
+      border: none;
+      padding: 0;
+      transition: all 0.25s;
+    }
+    .dropdown-menu-overlay.open {
+      display: flex;
+    }
+    .dropdown-menu-content {
+      margin: 0;
+      max-width: 220px;
+      width: 100%;
+      padding: 36px 24px 12px 12px;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 8pt;
+      background: #fff;
+      box-shadow: none;
+      border: none;
+    }
+    .dropdown-close {
+      position: absolute;
+      top: 16px;
+      right: 22px;
+      background: transparent;
+      border: none;
+      font-size: 18px;
+      color: #222;
+      cursor: pointer;
+      z-index: 2100;
+      line-height: 1;
+      font-family: Arial, sans-serif;
+      padding: 0;
+    }
+    .dropdown-section-title {
+      font-size: 8pt;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: bold;
+      letter-spacing: 1px;
+      margin: 0 0 8px 0;
+      color: #222;
+      cursor: pointer;
+    }
+    .dropdown-section-list {
+      border-left: none;
+      margin: 0 0 12px 0;
+      padding-left: 0;
+      list-style: none;
+      font-size: 8pt;
+      line-height: 1.6;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+    .dropdown-section-list li {
+      margin: 0 0 2px 0;
+      cursor: pointer;
+      transition: color 0.2s;
+      padding-left: 0;
+      font-weight: normal;
+      color: #222;
+    }
+    .dropdown-section-list li:hover,
+    .dropdown-section-list li.active {
+      color: #0a53ad;
+      font-weight: bold;
+    }
+    .dropdown-link {
+      color: #bbb;
+      text-decoration: none;
+      font-size: 8pt;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      margin-left: 0;
+      margin-top: 8px;
+      display: block;
+      opacity: 1;
+      transition: color 0.2s;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .dropdown-link:hover {
+      color: #222;
+      opacity: 1;
+    }
+    @media (max-width: 600px) {
+      .centered-name {
+        font-size: 1rem;
+        padding: 40px 8vw 20px 8vw;
+        height: 60vh;
+      }
+      .menu-icon,
+      .dropdown-close {
+        top: 10px;
+        right: 10px;
+      }
+      .dropdown-menu-overlay {
+        width: 100vw;
+        min-width: 0;
+      }
+      .dropdown-menu-content {
+        max-width: 98vw;
+        padding: 30px 10vw 10px 6vw;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="menu-icon" id="menu-icon" aria-label="Open menu">
+    <span class="menu-bar"></span>
+  </button>
+  <div class="dropdown-menu-overlay" id="dropdown-menu">
+    <button class="dropdown-close" id="menu-close" aria-label="Close menu">&times;</button>
+    <div class="dropdown-menu-content">
+      <div>
+        <div class="dropdown-section-title" id="exhibitions-home-link">Exhibitions</div>
+        <ul class="dropdown-section-list" id="exhibitions-list">
+          <li data-exhibition="Dishwasher-Safe">Dishwasher Safe</li>
+          <li data-exhibition="Counting-Time">Counting Time</li>
+          <li data-exhibition="Wrestling-Materiality">Wrestling Materiality</li>
+          <li data-exhibition="10-Years-Golden">10 Years Golden</li>
+          <li data-exhibition="Breathstroke">Breathstroke</li>
+          <li data-exhibition="Materiality-Υλικότητα-77">Materiality Υλικότητα 77</li>
+        </ul>
+      </div>
+      <a class="dropdown-link" href="#" tabindex="0" id="cv-link">CV</a>
+      <a class="dropdown-link" href="mailto:MAIL@YIORYIOS.COM" tabindex="0">Email</a>
+    </div>
+  </div>
+  <div id="main-content">
+    <div class="centered-name" id="centered-name" style="display: none;">
+      YIORYIOS PAPAYIORYIOU
+    </div>
+    <div class="slideshow" id="slideshow-block">
+      <img class="slide-img" id="slide-img" src="" alt="Portfolio Slide" />
+      <div class="center-controls" id="controls">
+        <button id="prev">← Previous</button>
+        <button id="next">Next →</button>
+      </div>
+    </div>
+  </div>
+  <div class="counter" id="counter"></div>
+  <script>
+    // Exhibition configurations
+    const exhibitions = {
+      "Dishwasher-Safe": {
+        folder: "Dishwasher Safe",
+        images: [
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0005.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0006.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0007.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0008.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0009.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0010.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0011.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0012.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0013.jpg"
+        ],
+        display: "Dishwasher Safe"
+      },
+      "Counting-Time": {
+        folder: "Counting Time",
+        images: [
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0014.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0015.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0016.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0017.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0018.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0019.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0020.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0021.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0022.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0023.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0024.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0025.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0026.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0027.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0028.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0029.jpg"
+        ],
+        display: "Counting Time"
+      },
+      "Wrestling-Materiality": {
+        folder: "Wrestling Materiality",
+        images: [
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0033.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0034.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0035.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0036.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0037.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0038.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0039.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0040.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0041.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0042.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0043.jpg"
+        ],
+        display: "Wrestling Materiality"
+      },
+      "10-Years-Golden": {
+        folder: "10 Years Golden",
+        images: [
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0048.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0049.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0050.jpg"
+        ],
+        display: "10 Years Golden"
+      },
+      "Breathstroke": {
+        folder: "Breathstroke",
+        images: [
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0044.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0045.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0046.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0047.jpg"
+        ],
+        display: "Breathstroke"
+      },
+      "Materiality-Υλικότητα-77": {
+        folder: "Materiality Υλικότητα 77",
+        images: [
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0051.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0052.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0053.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0054.jpg",
+          "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0055.jpg"
+        ],
+        display: "Materiality Υλικότητα 77"
+      }
+    };
+
+    // Main Index Page config
+    const mainPortfolio = {
+      folder: "Index page",
+      images: ["images/Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0001.jpg"],
+      display: "Portfolio"
+    };
+
+    // CV config
+    const cvPortfolio = {
+      folder: "CV",
+      images: [
+        "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0002.jpg",
+        "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0003.jpg",
+        "Exhibition-Portfolio-CV-Yioryios-Papayioryiou-2025_page-0004.jpg"
+      ],
+      display: "CV"
+    };
+
+    let currentExhibition = null; // null = main portfolio
+    let slides = [];
+    let current = 0;
+
+    function getImagesForExhibition(exhibitionKey) {
+      if (exhibitionKey === "CV") {
+        return cvPortfolio;
+      } else if (!exhibitionKey) {
+        return mainPortfolio;
+      } else {
+        return exhibitions[exhibitionKey];
+      }
+    }
+
+    function loadSlides(exhibitionKey) {
+      const config = getImagesForExhibition(exhibitionKey);
+      if (exhibitionKey === "CV") {
+        slides = config.images.map(img => `${config.folder}/${img}`);
+      } else if (!exhibitionKey) {
+        slides = config.images;
+      } else {
+        slides = config.images.map(img => `${config.folder}/${img}`);
+      }
+      return config.display;
+    }
+
+    function showSlide(n) {
+      if (slides.length === 0) return;
+      document.getElementById('slide-img').src = slides[n];
+      document.getElementById('counter').textContent = `${n + 1} / ${slides.length}`;
+      document.getElementById('prev').disabled = n === 0;
+      document.getElementById('next').disabled = n === slides.length - 1;
+    }
+
+    function setExhibition(exhibitionKey) {
+      currentExhibition = exhibitionKey;
+      loadSlides(exhibitionKey);
+      current = 0;
+      // Show/hide main name and slideshow
+      if (!exhibitionKey) {
+        document.getElementById('centered-name').style.display = '';
+        document.getElementById('slideshow-block').style.display = 'none';
+      } else {
+        document.getElementById('centered-name').style.display = 'none';
+        document.getElementById('slideshow-block').style.display = '';
+        showSlide(current);
+      }
+
+      // Mark active in overlay menu
+      document.querySelectorAll('#exhibitions-list li').forEach(li => {
+        li.classList.toggle('active', li.getAttribute('data-exhibition') === exhibitionKey);
+      });
+
+      // Show/hide controls and counter
+      const controls = document.getElementById('controls');
+      const counter = document.getElementById('counter');
+      // Home page (main portfolio)
+      if (!exhibitionKey) {
+        controls.classList.add('hidden');
+        counter.classList.add('hidden');
+      } else {
+        controls.classList.remove('hidden');
+        counter.classList.remove('hidden');
+      }
+      closeMenu();
+    }
+
+    document.getElementById('prev').onclick = function() {
+      if (current > 0) {
+        current--;
+        showSlide(current);
+      }
+    };
+    document.getElementById('next').onclick = function() {
+      if (current < slides.length - 1) {
+        current++;
+        showSlide(current);
+      }
+    };
+
+    document.addEventListener('keydown', function(e) {
+      if(document.getElementById('dropdown-menu').classList.contains('open')) return;
+      if (!document.getElementById('controls').classList.contains('hidden')) {
+        if (e.key === "ArrowRight" || e.key === "d") document.getElementById('next').click();
+        if (e.key === "ArrowLeft"  || e.key === "a") document.getElementById('prev').click();
+      }
+    });
+
+    // Dropdown menu logic
+    const menuIcon = document.getElementById('menu-icon');
+    const menuBar = menuIcon.querySelector('.menu-bar');
+    const dropdownMenu = document.getElementById('dropdown-menu');
+    const menuClose = document.getElementById('menu-close');
+
+    function openMenu() {
+      dropdownMenu.classList.add('open');
+      menuBar.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeMenu() {
+      dropdownMenu.classList.remove('open');
+      menuBar.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    menuIcon.onclick = openMenu;
+    menuClose.onclick = closeMenu;
+    dropdownMenu.onclick = function(e) {
+      if(e.target === dropdownMenu) closeMenu();
+    };
+
+    document.querySelectorAll('#exhibitions-list li').forEach(function(li){
+      li.addEventListener('click', function(){
+        setExhibition(li.getAttribute('data-exhibition'));
+      });
+    });
+
+    // 'Exhibitions' title returns to homepage
+    document.getElementById('exhibitions-home-link').onclick = function() {
+      setExhibition(null);
+    };
+
+    // CV link in menu
+    document.getElementById('cv-link').onclick = function(e) {
+      e.preventDefault();
+      setExhibition("CV");
+    };
+
+    // Close menu on ESC
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape') closeMenu();
+    });
+
+    // Initial load: show only main name, hide slideshow
+    document.getElementById('centered-name').style.display = '';
+    document.getElementById('slideshow-block').style.display = 'none';
+    document.getElementById('controls').classList.add('hidden');
+    document.getElementById('counter').classList.add('hidden');
+  </script>
+</body>
+</html>
