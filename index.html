@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Yioryios Portfolio Slideshow</title>
+  <title>Yioryios</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     html, body {
@@ -28,6 +28,15 @@
       text-align: center;
       width: 100vw;
       box-sizing: border-box;
+    }
+    .centered-name a {
+      color: #000;
+      text-decoration: none;
+    }
+    .centered-name a:active,
+    .centered-name a:focus {
+      color: #444;
+      outline: none;
     }
     .slideshow {
       width: 90vw;
@@ -207,37 +216,6 @@
       font-family: Arial, sans-serif;
       padding: 0;
     }
-    .dropdown-section-title {
-      font-size: 8pt;
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      font-weight: bold;
-      letter-spacing: 1px;
-      margin: 0 0 8px 0;
-      color: #222;
-      cursor: pointer;
-    }
-    .dropdown-section-list {
-      border-left: none;
-      margin: 0 0 12px 0;
-      padding-left: 0;
-      list-style: none;
-      font-size: 8pt;
-      line-height: 1.6;
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    }
-    .dropdown-section-list li {
-      margin: 0 0 2px 0;
-      cursor: pointer;
-      transition: color 0.2s;
-      padding-left: 0;
-      font-weight: normal;
-      color: #222;
-    }
-    .dropdown-section-list li:hover,
-    .dropdown-section-list li.active {
-      color: #0a53ad;
-      font-weight: bold;
-    }
     .dropdown-link {
       color: #bbb;
       text-decoration: none;
@@ -284,24 +262,12 @@
   <div class="dropdown-menu-overlay" id="dropdown-menu">
     <button class="dropdown-close" id="menu-close" aria-label="Close menu">&times;</button>
     <div class="dropdown-menu-content">
-      <div>
-        <div class="dropdown-section-title" id="exhibitions-home-link">Exhibitions</div>
-        <ul class="dropdown-section-list" id="exhibitions-list">
-          <li data-exhibition="Dishwasher-Safe">Dishwasher Safe</li>
-          <li data-exhibition="Counting-Time">Counting Time</li>
-          <li data-exhibition="Wrestling-Materiality">Wrestling Materiality</li>
-          <li data-exhibition="10-Years-Golden">10 Years Golden</li>
-          <li data-exhibition="Breathstroke">Breathstroke</li>
-          <li data-exhibition="Materiality-Υλικότητα-77">Materiality Υλικότητα 77</li>
-        </ul>
-      </div>
-      <a class="dropdown-link" href="#" tabindex="0" id="cv-link">CV</a>
       <a class="dropdown-link" href="mailto:MAIL@YIORYIOS.COM" tabindex="0">Email</a>
     </div>
   </div>
   <div id="main-content">
     <div class="centered-name" id="centered-name" style="display: none;">
-      YIORYIOS PAPAYIORYIOU
+      <a id="home-pdf-link" href="PDF/Yioryios Papayioryiou_Exhibitions_25.pdf" target="_blank" rel="noopener">YIORYIOS PAPAYIORYIOU</a>
     </div>
     <div class="slideshow" id="slideshow-block">
       <img class="slide-img" id="slide-img" src="" alt="Portfolio Slide" />
@@ -535,16 +501,22 @@
       });
     });
 
-    // 'Exhibitions' title returns to homepage
-    document.getElementById('exhibitions-home-link').onclick = function() {
-      setExhibition(null);
-    };
+    // 'Exhibitions' title returns to homepage (only if element exists)
+    const exhibitionsHomeLink = document.getElementById('exhibitions-home-link');
+    if (exhibitionsHomeLink) {
+      exhibitionsHomeLink.onclick = function() {
+        setExhibition(null);
+      };
+    }
 
-    // CV link in menu
-    document.getElementById('cv-link').onclick = function(e) {
-      e.preventDefault();
-      setExhibition("CV");
-    };
+    // CV link in menu (only if element exists)
+    const cvLinkEl = document.getElementById('cv-link');
+    if (cvLinkEl) {
+      cvLinkEl.onclick = function(e) {
+        e.preventDefault();
+        setExhibition("CV");
+      };
+    }
 
     // Close menu on ESC
     document.addEventListener('keydown', function(e){
