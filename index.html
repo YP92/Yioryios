@@ -1,18 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Index</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
 </head>
 <body>
     <nav>
-        <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Performance</a></li>  
-            <li><a href="PDF/Yioryios Papayioryiou_Performance.pdf">Download Performance PDF</a></li>
-            <li><a href="#">Email</a></li>
-        </ul>
+        <div class="dropdown">
+            <button class="dropdown-button">Menu</button>
+            <div class="dropdown-content">
+                <a class="dropdown-link" href="PDF/Yioryios Papayioryiou_Performance.pdf" target="_blank" rel="noopener">Performance</a>
+                <a class="dropdown-link" href="mailto:example@mail.com">Email</a>
+                <!-- Other links -->
+            </div>
+        </div>
     </nav>
-    <h1>Welcome to Yioryios</h1>
+
+    <script src="script.js"></script>
 </body>
 </html>
